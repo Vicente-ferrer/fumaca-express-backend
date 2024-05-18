@@ -1,24 +1,24 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Product {
+export class User {
   /**
-   * The unique identifier of the product.
+   * The unique identifier for the user.
    */
   @PrimaryGeneratedColumn()
   id: number;
 
   /**
-   * The name of the product.
+   * The username of the user.
    */
-  @Column()
-  name: string;
+  @Column({ unique: true })
+  username: string;
 
   /**
-   * The price of the product.
+   * The password of the user.
    */
-  @Column('decimal')
-  price: number;
+  @Column()
+  password: string;
 
   // Adicione mais campos conforme necessário
 }
