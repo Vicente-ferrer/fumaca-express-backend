@@ -12,24 +12,28 @@ export class Order {
 
   /**
    * The user who placed the order.
+   * @type {User}
    */
   @ManyToOne(() => User, (user) => user.id)
   user: User;
 
   /**
    * The product associated with the order.
+   * @type {Product}
    */
   @ManyToOne(() => Product, (product) => product.id)
   product: Product;
 
   /**
    * The quantity of the product in the order.
+   * @type {number}
    */
   @Column()
   quantity: number;
 
   /**
    * The total price of the order.
+   * @type {number}
    */
   @Column('decimal')
   total: number;

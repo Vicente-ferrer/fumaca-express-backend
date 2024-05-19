@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -11,22 +16,35 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  /**
-   * Creates a new user.
-   * @param createUserDto - The data for creating a new user.
-   * @returns A Promise that resolves to the created user.
-   */
   async create(createUserDto: CreateUserDto): Promise<User> {
+    // Check if a user with the same username already exists
+    const existingUser = await this.userRepository.findOne({
+      where: { username: createUserDto.username },
+    });
+    if (existingUser) {
+      throw new ConflictException('Username already exists');
+    }
+
+    // Create a new user
     const newUser = this.userRepository.create(createUserDto);
-    return this.userRepository.save(newUser);
+
+    try {
+      return await this.userRepository.save(newUser);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error saving the user',
+        error.message,
+      );
+    }
   }
 
-  /**
-   * Finds a user by their username.
-   * @param username - The username of the user to find.
-   * @returns A Promise that resolves to the found user, or undefined if not found.
-   */
-  async findOne(username: string): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { username } });
+  async findOne(username: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { username } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 }

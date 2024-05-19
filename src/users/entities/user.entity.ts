@@ -4,18 +4,21 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 export class User {
   /**
    * The unique identifier for the user.
+   * @type {number}
    */
   @PrimaryGeneratedColumn()
   id: number;
 
   /**
    * The username of the user.
+   * @type {string}
    */
   @Column({ unique: true })
   username: string;
 
   /**
    * The password of the user.
+   * @type {string}
    */
   @Column()
   password: string;
